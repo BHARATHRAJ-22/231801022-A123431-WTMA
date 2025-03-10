@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form with Validation</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Main Container Styles */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin: 20px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* Header Styles */
+        h1 {
+            color: #4a4a95;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            border-radius: 2px;
+        }
+
+        /* Form Row */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a4a95;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 8px rgba(110, 142, 251, 0.4);
+        }
+
+        .form-control::placeholder {
+            color: #bbbbbb;
+        }
+
+        .error {
+            color: #ff5555;
+            font-size: 13px;
+            margin-top: 6px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Gender Radio Controls */
+        .gender-group {
+            display: flex;
+            gap: 25px;
+            margin-top: 5px;
+        }
+
+        .radio-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-container input {
+            display: none;
+        }
+
+        .radio-container .radio-mark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e1e1e1;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .radio-container input:checked + .radio-mark {
+            border-color: #6e8efb;
+        }
+
+        .radio-container input:checked + .radio-mark::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background-color: #6e8efb;
+            border-radius: 50%;
+            animation: radioScale 0.3s ease-in-out;
+        }
+
+        /* Button Styles */
+        .btn-container {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 13px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(110, 142, 251, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Table Styles */
+        .data-table {
+            margin-top: 50px;
+            display: none;
+            animation: slideUp 0.6s ease-in-out;
+        }
+
+        .data-table h2 {
+            margin-bottom: 25px;
+            color: #4a4a95;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .data-table h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            border-radius: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        thead {
+            background-color: #4a4a95;
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9ff;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f0f4ff;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes radioScale {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Input focus animation */
+        .input-animation {
+            position: relative;
+        }
+
+        .input-animation .form-control {
+            padding: 14px 15px;
+        }
+
+        .input-animation .form-control:focus + .focus-border {
+            width: 100%;
+            transition: 0.4s;
+        }
+
+        .input-animation .focus-border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: #6e8efb;
+            transition: 0.4s;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 25px 15px;
+                margin: 10px;
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .gender-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Signup Form</h1>
+        <form id="signupForm">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group input-animation">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name">
+                        <span class="focus-border"></span>
+                        <div id="firstNameError" class="error"></div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group input-animation">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name">
+                        <span class="focus-border"></span>
+                        <div id="lastNameError" class="error"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group input-animation">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="yourname@example.com">
+                <span class="focus-border"></span>
+                <div id="emailError" class="error"></div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group input-animation">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob">
+                        <span class="focus-border"></span>
+                        <div id="dobError" class="error"></div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group input-animation">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" placeholder="Enter your age">
+                        <span class="focus-border"></span>
+                        <div id="ageError" class="error"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                <div class="gender-group">
+                    <label class="radio-container">
+                        <input type="radio" name="gender" id="male" value="Male">
+                        <span class="radio-mark"></span>
+                        Male
+                    </label>
+                    <label class="radio-container">
+                        <input type="radio" name="gender" id="female" value="Female">
+                        <span class="radio-mark"></span>
+                        Female
+                    </label>
+                    <label class="radio-container">
+                        <input type="radio" name="gender" id="other" value="Other">
+                        <span class="radio-mark"></span>
+                        Other
+                    </label>
+                </div>
+                <div id="genderError" class="error"></div>
+            </div>
+            
+            <div class="form-group input-animation">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your 10-digit phone number">
+                <span class="focus-border"></span>
+                <div id="phoneError" class="error"></div>
+            </div>
+            
+            <div class="form-group input-animation">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your full address"></textarea>
+                <span class="focus-border"></span>
+                <div id="addressError" class="error"></div>
+            </div>
+            
+            <div class="btn-container">
+                <button type="button" id="signupBtn" class="btn">Signup</button>
+            </div>
+        </form>
+        
+        <div id="dataTable" class="data-table">
+            <h2>Submitted Information</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('signupForm');
+            const signupBtn = document.getElementById('signupBtn');
+            const dataTable = document.getElementById('dataTable');
+            const tableBody = document.getElementById('tableBody');
+            
+            // Changed to click event on the button instead of form submit
+            signupBtn.addEventListener('click', function() {
+                // Reset previous errors
+                clearErrors();
+                
+                // Validate form
+                if (validateForm()) {
+                    // Display data in table immediately when validation passes
+                    displayData();
+                }
+            });
+            
+            function clearErrors() {
+                const errorElements = document.querySelectorAll('.error');
+                errorElements.forEach(element => {
+                    element.textContent = '';
+                });
+            }
+            
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate First Name
+                const firstName = document.getElementById('firstName').value.trim();
+                if (firstName === '') {
+                    document.getElementById('firstNameError').textContent = 'First Name is required';
+                    isValid = false;
+                } else if (firstName.length < 4) {
+                    document.getElementById('firstNameError').textContent = 'First Name should be at least 4 characters';
+                    isValid = false;
+                } else if (!/^[a-zA-Z]+$/.test(firstName)) {
+                    document.getElementById('firstNameError').textContent = 'First Name should contain only alphabets';
+                    isValid = false;
+                }
+                
+                // Validate Last Name
+                const lastName = document.getElementById('lastName').value.trim();
+                if (lastName === '') {
+                    document.getElementById('lastNameError').textContent = 'Last Name is required';
+                    isValid = false;
+                } else if (!/^[a-zA-Z]+$/.test(lastName)) {
+                    document.getElementById('lastNameError').textContent = 'Last Name should contain only alphabets';
+                    isValid = false;
+                }
+                
+                // Validate Email
+                const email = document.getElementById('email').value.trim();
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                if (email === '') {
+                    document.getElementById('emailError').textContent = 'Email is required';
+                    isValid = false;
+                } else if (!emailPattern.test(email)) {
+                    document.getElementById('emailError').textContent = 'Please enter a valid email (name@domain.com)';
+                    isValid = false;
+                }
+                
+                // Validate Date of Birth
+                const dob = document.getElementById('dob').value;
+                if (dob === '') {
+                    document.getElementById('dobError').textContent = 'Date of Birth is required';
+                    isValid = false;
+                } else {
+                    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+                    if (!datePattern.test(dob)) {
+                        document.getElementById('dobError').textContent = 'Please enter a valid date';
+                        isValid = false;
+                    }
+                }
+                
+                // Validate Age
+                const age = document.getElementById('age').value.trim();
+                if (age === '') {
+                    document.getElementById('ageError').textContent = 'Age is required';
+                    isValid = false;
+                } else if (!/^\d{1,2}$/.test(age) || parseInt(age) < 10 || parseInt(age) > 99) {
+                    document.getElementById('ageError').textContent = 'Age should be a 2-digit number (10-99)';
+                    isValid = false;
+                }
+                
+                // Validate Gender
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (!gender) {
+                    document.getElementById('genderError').textContent = 'Please select a gender';
+                    isValid = false;
+                }
+                
+                // Validate Phone Number
+                const phone = document.getElementById('phone').value.trim();
+                if (phone === '') {
+                    document.getElementById('phoneError').textContent = 'Phone Number is required';
+                    isValid = false;
+                } else if (!/^\d{10}$/.test(phone)) {
+                    document.getElementById('phoneError').textContent = 'Phone Number should contain exactly 10 digits';
+                    isValid = false;
+                }
+                
+                // Validate Address
+                const address = document.getElementById('address').value.trim();
+                if (address === '') {
+                    document.getElementById('addressError').textContent = 'Address is required';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            function displayData() {
+                // Clear previous data
+                tableBody.innerHTML = '';
+                
+                // Get form values
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const dob = document.getElementById('dob').value;
+                const age = document.getElementById('age').value.trim();
+                const gender = document.querySelector('input[name="gender"]:checked').value;
+                const phone = document.getElementById('phone').value.trim();
+                const address = document.getElementById('address').value.trim();
+                
+                // Create table rows
+                const fields = [
+                    { name: 'First Name', value: firstName },
+                    { name: 'Last Name', value: lastName },
+                    { name: 'Email', value: email },
+                    { name: 'Date of Birth', value: dob },
+                    { name: 'Age', value: age },
+                    { name: 'Gender', value: gender },
+                    { name: 'Phone Number', value: phone },
+                    { name: 'Address', value: address }
+                ];
+                
+                // Add rows with animation delay
+                fields.forEach((field, index) => {
+                    const row = document.createElement('tr');
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateY(20px)';
+                    row.style.transition = 'all 0.3s ease';
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = field.name;
+                    
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = field.value;
+                    
+                    row.appendChild(nameCell);
+                    row.appendChild(valueCell);
+                    
+                    tableBody.appendChild(row);
+                    
+                    // Apply animation with staggered delay
+                    setTimeout(() => {
+                        row.style.opacity = '1';
+                        row.style.transform = 'translateY(0)';
+                    }, 100 * index);
+                });
+                
+                // Show the table immediately
+                dataTable.style.display = 'block';
+                
+                // Scroll to the table
+                setTimeout(() => {
+                    dataTable.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+
+            // Auto-calculate age from date of birth
+            const dobInput = document.getElementById('dob');
+            const ageInput = document.getElementById('age');
+            
+            dobInput.addEventListener('change', function() {
+                if (this.value) {
+                    const birthDate = new Date(this.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    
+                    if (age >= 10 && age <= 99) {
+                        ageInput.value = age;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
